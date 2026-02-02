@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yaaay! 💕</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', 'Nunito', 'Arial', sans-serif;
+            background: linear-gradient(135deg,  #F2BED1 0%, #F9F5F6 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            text-align: center;
+            background: white;
+            padding: 40px 60px;
+            border-radius: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            width: 100%;
+        }
+
+        h1 {
+            font-size: 3em;
+            color: #FF9494;
+            margin-bottom: 20px;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        .emoji {
+            font-size: 5em;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .gif-container {
+            margin: 30px 0;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+            min-height: 300px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #f0f0f0;
+        }
+
+        .gif-container img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .loading {
+            color: #666;
+            font-size: 1.2em;
+        }
+
+        p {
+            font-size: 1.3em;
+            color: #555;
+            margin-top: 20px;
+        }
+
+        .back-btn {
+            margin-top: 30px;
+            padding: 12px 30px;
+            font-size: 1.1em;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .back-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: #f0f;
+            position: absolute;
+            animation: confetti-fall 3s linear infinite;
+        }
+
+        @keyframes confetti-fall {
+            to {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <span class="emoji">🎉💖🎉</span>
+        <h1>Yay! I knew it! 💕</h1>
+        <p>You've made me the happiest! 😊</p>
+
+        <div class="gif-container" id="gifContainer">
+            <div class="loading">Loading celebration...</div>
+        </div>
+
+        <a href="index.html" class="back-btn">← Go Back</a>
+    </div>
+
+    <script>
+        // Giphy API configuration
+        const GIPHY_API_KEY = 'eMRkfIok7IKTL2S8ez0h2o3ivLOrahkS';
+        const SEARCH_TERMS = ['love', 'valentine', 'heart', 'celebration', 'happy love', 'cute love'];
+
+        async function fetchRandomGif() {
+            try {
+                // Select a random search term
+                const randomTerm = SEARCH_TERMS[Math.floor(Math.random() * SEARCH_TERMS.length)];
+
+                // Fetch from Giphy API
+                const response = await fetch(
+                    `https://api.giphy.com/v1/gifs/search?api_key=${GIPHY_API_KEY}&q=${randomTerm}&limit=50&rating=g`
+                );
+
+                const data = await response.json();
+
+                if (data.data && data.data.length > 0) {
+                    // Pick a random gif from the results
+                    const randomIndex = Math.floor(Math.random() * data.data.length);
+                    const gifUrl = data.data[randomIndex].images.original.url;
+
+                    // Display the gif
+                    const gifContainer = document.getElementById('gifContainer');
+                    gifContainer.innerHTML = `<img src="${gifUrl}" alt="Valentine celebration">`;
+                } else {
+                    throw new Error('No GIFs found');
+                }
+            } catch (error) {
+                console.error('Error fetching GIF:', error);
+                // Fallback: display a message
+                const gifContainer = document.getElementById('gifContainer');
+                gifContainer.innerHTML = `
+                    <div style="padding: 40px;">
+                        <p style="color: #e74c3c; font-size: 3em;">💝</p>
+                        <p style="font-size: 1.1em; color: #666; margin-top: 10px;">
+                            Couldn't load GIF, but my love for you is still infinite! 💕
+                        </p>
+                        <p style="font-size: 0.9em; color: #999; margin-top: 10px;">
+                            (Add your Giphy API key to see animated GIFs)
+                        </p>
+                    </div>
+                `;
+            }
+        }
+
+        // Load a random gif when the page loads
+        fetchRandomGif();
+
+        // Create confetti effect
+        function createConfetti() {
+            const colors = ['#f093fb', '#f5576c', '#4facfe', '#00f2fe', '#ffd700', '#ff69b4'];
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * 100 + 'vw';
+                    confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.animationDelay = Math.random() * 3 + 's';
+                    confetti.style.animationDuration = (Math.random() * 2 + 2) + 's';
+                    document.body.appendChild(confetti);
+
+                    setTimeout(() => confetti.remove(), 5000);
+                }, i * 50);
+            }
+        }
+
+        createConfetti();
+    </script>
+</body>
+
+</html>
